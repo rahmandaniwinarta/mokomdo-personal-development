@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 const transporter = require("../helpers/transporter");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const key = process.env.OKAI_SECRET;
 
 module.exports = {
   register: async (req, res) => {
@@ -16,7 +17,7 @@ module.exports = {
       });
       if (isEmailExist) throw "Email have been used";
 
-      const token = jwt.sign({ id: email }, "mokomdo");
+      const token = jwt.sign({ id: email }, key);
 
       await transporter.sendMail({
         from: "Admin",
@@ -83,6 +84,30 @@ module.exports = {
       });
     } catch (err) {
       res.send(400).send(err);
+    }
+  },
+
+  login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const isUserExist = await user.findOne({
+        where: {
+          email: email ? email : "",
+        },
+        raw: true,
+      });
+      // console.log(isUserExist)
+      if (!isUserExist) throw "User not Found!";
+
+      const isValid = await bcrypt.compare(password, isUserExist.password);
+      if (!isValid) throw "Wrong Password";
+
+      const token = jwt.sign({ id: isUserExist.id }, key);
+
+      res.status(200).send({ token, isUserExist });
+    } catch (err) {
+      res.status(400).send(err);
     }
   },
 };

@@ -1,4 +1,6 @@
 import React from "react";
+import { useRef } from "react";
+import Axios from "axios";
 import {
   Box,
   Button,
@@ -13,9 +15,9 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Form,
 } from "@chakra-ui/react";
-
-import { useRef } from "react";
+const url = process.env.REACT_APP_API_BASE_URL;
 
 export const LoginModal = () => {
   const {
@@ -23,6 +25,28 @@ export const LoginModal = () => {
     onOpen: onOpenLogin,
     onClose: onCloseLogin,
   } = useDisclosure();
+
+  const inputEmail = useRef("");
+  const inputPass = useRef("");
+
+  const onLogin = async (data) => {
+    try {
+      const user = {
+        email: inputEmail.current.value,
+        password: inputPass.current.value,
+      };
+
+      console.log(user);
+
+      const result = await Axios.post(`${url}/user/login`, user);
+      console.log(result.data.token);
+
+      localStorage.setItem("token", result.data.token);
+      onCloseLogin();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Box>
@@ -45,17 +69,31 @@ export const LoginModal = () => {
           <ModalHeader>Sign In to your Account</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={5}>
-            <FormControl>
-              <FormLabel mb={4}>Email</FormLabel>
-              <Input placeholder="Enter your email" />
-              <FormLabel mt={5}>Password</FormLabel>
-              <Input placeholder="paswword" />
-            </FormControl>
+            <form onSubmit={onLogin}>
+              <FormControl>
+                <FormLabel mb={4}>Email</FormLabel>
+                <Input
+                  id="email"
+                  placeholder="Enter your Email"
+                  type="email"
+                  ref={inputEmail}
+                />
+                <FormLabel mt={5}>Password</FormLabel>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your Password"
+                  ref={inputPass}
+                />
+              </FormControl>
+              <ModalFooter>
+                <Button mr={5} type="submit">
+                  Login
+                </Button>
+                <Button onClick={onCloseLogin}>Cancel</Button>
+              </ModalFooter>
+            </form>
           </ModalBody>
-          <ModalFooter>
-            <Button mr={5}>Login</Button>
-            <Button onClick={onCloseLogin}>Cancel</Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </Box>
