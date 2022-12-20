@@ -124,6 +124,7 @@ module.exports = {
       // console.log(isUserExist);
 
       res.status(200).send(isUserExist);
+
     } catch (err) {
       res.status(400).send(err);
     }
