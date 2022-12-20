@@ -103,9 +103,27 @@ module.exports = {
       const isValid = await bcrypt.compare(password, isUserExist.password);
       if (!isValid) throw "Wrong Password";
 
-      const token = jwt.sign({ id: isUserExist.id }, key);
+      const token = jwt.sign({ email: isUserExist.email }, key);
 
-      res.status(200).send({ token, isUserExist });
+      res
+        .status(200)
+        .send({ message: "Welcome to Mokomdo", token, isUserExist });
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  },
+  keeplogin: async (req, res) => {
+    try {
+      // console.log(req.user);
+      const isUserExist = await db.User.findOne({
+        where: {
+          email: req.user.email,
+        },
+        raw: true,
+      });
+      // console.log(isUserExist);
+
+      res.status(200).send(isUserExist);
     } catch (err) {
       res.status(400).send(err);
     }

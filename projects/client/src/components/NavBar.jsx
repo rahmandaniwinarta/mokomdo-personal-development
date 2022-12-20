@@ -25,6 +25,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Avatar,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -32,12 +33,20 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { useRef } from "react";
 import { RegisterModal } from "./RegisterModal";
 import { LoginModal } from "./LoginModal";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/userSlice";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
+  const { email } = useSelector((state) => state.userSlice.value);
+  const dispatch = useDispatch();
+
+  const onLogout = async () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+  };
 
   return (
     <Box>
@@ -79,16 +88,44 @@ export default function WithSubnavigation() {
             <DesktopNav />
           </Flex>
         </Flex>
-
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={"flex-end"}
-          direction={"row"}
-          spacing={6}
-        >
-          <LoginModal />
-          <RegisterModal />
-        </Stack>
+        {email ? (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={"flex-end"}
+            direction={"row"}
+            spacing={6}
+          >
+            <Stack direction={"row"}>
+              <Avatar name={email} />
+            </Stack>
+            <Button
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"sm"}
+              fontWeight={600}
+              color={"white"}
+              bg={"pink.400"}
+              as={Link}
+              onClick={onLogout}
+              to="/"
+              _hover={{
+                bg: "pink.300",
+              }}
+              width={"5rem"}
+            >
+              Log Out
+            </Button>
+          </Stack>
+        ) : (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={"flex-end"}
+            direction={"row"}
+            spacing={6}
+          >
+            <LoginModal />
+            <RegisterModal />
+          </Stack>
+        )}
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>

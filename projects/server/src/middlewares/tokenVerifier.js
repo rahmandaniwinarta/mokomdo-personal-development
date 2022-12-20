@@ -1,17 +1,17 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-  verifyToken: (req, res, next) => {
+  tokenVerifier: (req, res, next) => {
     try {
       let token = req.headers.authorization; //cara nerima bearer token
 
-      if (!token) throw "your token is empty dumbass";
+      if (!token) throw "your token is empty";
 
       token = token.split(" ")[1]; //untuk nge remove Bearer dari string
 
       if (token === "null" || !token) throw "Unauthorized Request";
 
-      let verifiedUser = jwt.verify(token, "z1x2c3v4b5");
+      let verifiedUser = jwt.verify(token, process.env.OKAI_SECRET);
 
       if (!verifiedUser) throw "Verify token failed";
 
