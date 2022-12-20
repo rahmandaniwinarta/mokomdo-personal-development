@@ -44,7 +44,6 @@ export const RegisterModal = () => {
         icon: "success",
         title: "Email Sent",
         text: `${result.data.message}`,
-
         customClass: {
           container: "my-swal",
         },
@@ -59,7 +58,6 @@ export const RegisterModal = () => {
         text: err.response.data.name
           ? err.response.data.errors[0].message
           : err.response.data,
-
         customClass: {
           container: "my-swal",
         },

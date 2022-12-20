@@ -1,6 +1,11 @@
 import React from "react";
 import { useRef } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/userSlice";
 import Axios from "axios";
+import Swal from "sweetalert2";
+
 import {
   Box,
   Button,
@@ -25,6 +30,53 @@ export const LoginModal = () => {
     onOpen: onOpenLogin,
     onClose: onCloseLogin,
   } = useDisclosure();
+  const dispatch = useDispatch();
+  const { email } = useSelector((state) => state.userSlice.value);
+  console.log(email);
+  const inputEmail = useRef("");
+  const inputPass = useRef("");
+
+  const onLogin = async () => {
+    try {
+      const user = {
+        email: inputEmail.current.value,
+        password: inputPass.current.value,
+      };
+
+      const result = await Axios.post(`${url}/user/login`, user);
+      dispatch(
+        login({
+          email: result.data.isUserExist.email,
+        })
+      );
+
+      localStorage.setItem("token", result.data.token);
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Success",
+        text: `${result.data.message}`,
+
+        customClass: {
+          container: "my-swal",
+        },
+      });
+
+      onCloseLogin();
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed Attempt",
+        text: err.response.data.name
+          ? err.response.data.errors[0].message
+          : err.response.data,
+
+        customClass: {
+          container: "my-swal",
+        },
+      });
+    }
+  };
 
   const inputEmail = useRef("");
   const inputPass = useRef("");
