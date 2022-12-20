@@ -41,7 +41,7 @@ export const VerificationPage = () => {
           Authorization: `Bearer ${params.token}`,
         },
       });
-      // console.log(result.data);
+      console.log(result.data);
       setUser(result.data.user);
     } catch (err) {
       Swal.fire({

@@ -74,7 +74,7 @@ module.exports = {
 
   verification: async (req, res) => {
     try {
-      const verify = jwt.verify(req.token, "mokomdo");
+      const verify = jwt.verify(req.token, key);
 
       // console.log(verify);
 
