@@ -1,6 +1,5 @@
 import React from "react";
 import { useRef } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/userSlice";
 import Axios from "axios";
@@ -33,6 +32,7 @@ export const LoginModal = () => {
   const dispatch = useDispatch();
   const { email } = useSelector((state) => state.userSlice.value);
   console.log(email);
+
   const inputEmail = useRef("");
   const inputPass = useRef("");
 
@@ -75,28 +75,6 @@ export const LoginModal = () => {
           container: "my-swal",
         },
       });
-    }
-  };
-
-  const inputEmail = useRef("");
-  const inputPass = useRef("");
-
-  const onLogin = async (data) => {
-    try {
-      const user = {
-        email: inputEmail.current.value,
-        password: inputPass.current.value,
-      };
-
-      console.log(user);
-
-      const result = await Axios.post(`${url}/user/login`, user);
-      console.log(result.data.token);
-
-      localStorage.setItem("token", result.data.token);
-      onCloseLogin();
-    } catch (err) {
-      console.log(err);
     }
   };
 
